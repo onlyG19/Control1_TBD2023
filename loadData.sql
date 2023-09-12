@@ -14,16 +14,16 @@ VALUES (1, 'Maipú'),
        (10, 'Independencia');
 
 INSERT INTO apoderado (id_apoderado, nombre, apellido, sexo, id_comuna)
-VALUES (1, 'Diane', 'Oxtarby', 'Female', 5),
-       (2, 'Hazlett', 'Arntzen', 'Male', 10),
-       (3, 'Van', 'Ravenshear', 'Male', 6),
-       (4, 'Matthus', 'Flye', 'Male', 9),
-       (5, 'Honey', 'Dawidowitsch', 'Female', 4),
-       (6, 'Rheba', 'Burke', 'Female', 9),
-       (7, 'Brigid', 'Edginton', 'Female', 7),
-       (8, 'Hanson', 'Yaneev', 'Male', 5),
-       (9, 'Pia', 'Figgs', 'Female', 7),
-       (10, 'Alexa', 'Biset', 'Female', 8);
+VALUES (1, 'Diane', 'Oxtarby', 'F', 5),
+       (2, 'Hazlett', 'Arntzen', 'M', 10),
+       (3, 'Van', 'Ravenshear', 'M', 6),
+       (4, 'Matthus', 'Flye', 'M', 9),
+       (5, 'Honey', 'Dawidowitsch', 'F', 4),
+       (6, 'Rheba', 'Burke', 'F', 9),
+       (7, 'Brigid', 'Edginton', 'F', 7),
+       (8, 'Hanson', 'Yaneev', 'M', 5),
+       (9, 'Pia', 'Figgs', 'F', 7),
+       (10, 'Alexa', 'Biset', 'F', 8);
 
 INSERT INTO curso (id_curso, nivel, letra)
 VALUES (1, 4, 'B'),
@@ -37,16 +37,22 @@ VALUES (1, 4, 'B'),
        (9, 5, 'C'),
        (10, 4, 'F');
 
-INSERT INTO rol (id_rol, nombre_rol) VALUES (1, 'Profesor');
+INSERT INTO rol (id_rol, nombre_rol) VALUES
+ (1, 'Profesor'),
+ (2, 'Conserje'),
+ (3, 'Inspector'),
+ (4, 'Rector'),
+ (5, 'Secretaria');
 
-INSERT INTO franja_horaria (id_franja, hora_inicio, hora_fin)
-VALUES (1, '2023-09-12 08:00:00-03:00', '2023-09-12 09:00:00-03:00'),
-       (2, '2023-09-12 09:00:00-03:00', '2023-09-12 10:00:00-03:00'),
-       (3, '2023-09-12 10:00:00-03:00', '2023-09-12 11:00:00-03:00'),
-       (4, '2023-09-12 11:00:00-03:00', '2023-09-12 12:00:00-03:00'),
-       (5, '2023-09-12 13:00:00-03:00', '2023-09-12 14:00:00-03:00'),
-       (6, '2023-09-12 14:00:00-03:00', '2023-09-12 15:00:00-03:00'),
-       (7, '2023-09-12 16:00:00-03:00', '2023-09-12 17:00:00-03:00');
+INSERT INTO franja_horaria (id_franja, hora_inicio, hora_fin, dia)
+VALUES 
+    (1, '08:00:00', '09:00:00', '2023-09-12'),
+    (2, '09:00:00', '10:00:00', '2023-09-12'),
+    (3, '10:00:00', '11:00:00', '2023-09-12'),
+    (4, '11:00:00', '12:00:00', '2023-09-12'),
+    (5, '13:00:00', '14:00:00', '2023-09-12'),
+    (6, '14:00:00', '15:00:00', '2023-09-12'),
+    (7, '16:00:00', '17:00:00', '2023-09-12');
 
 
 INSERT INTO colegio (id_colegio, nombre, id_comuna)
@@ -84,11 +90,11 @@ VALUES (1, 1),
        (8, 1),
        (9, 1),
        (10, 1),
-       (11, 1),
-       (12, 1),
-       (13, 1),
-       (14, 1),
-       (15, 1);
+       (11, 2),
+       (12, 3),
+       (13, 4),
+       (14, 5),
+       (15, 2);
 
 INSERT INTO alumno (id_alumno, nombre, apellido, id_colegio, id_comuna)
 VALUES (1, 'Mateo', 'Muñoz', 1, 7),
@@ -160,7 +166,6 @@ VALUES (4, 5),
        (1, 6),
        (10, 5),
        (2, 5),
-       (10, 4),
        (5, 6);
 
 INSERT INTO franja_alumno (id_franja, id_alumno, asistencia)
@@ -171,3 +176,11 @@ VALUES (1, 1, true),
        (5, 5, true),
        (6, 6, false),
        (7, 7, false);
+
+INSERT INTO Empleado_Administrativo (id_administrativo, nombre, apellido, id_empleado)
+VALUES
+    (1, 'Juan', 'González', 11),
+    (2, 'María', 'Martínez', 12),
+    (3, 'Pedro', 'López', 13),
+    (4, 'Carolina', 'Fernández', 14),
+    (5, 'Luis', 'Pérez', 15);

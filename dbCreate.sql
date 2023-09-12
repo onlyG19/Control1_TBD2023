@@ -28,8 +28,9 @@ CREATE TABLE IF NOT EXISTS Colegio (
 
 CREATE TABLE IF NOT EXISTS Franja_Horaria(
     id_franja serial PRIMARY KEY,
-    hora_inicio timestamptz,
-    hora_fin timestamptz
+    hora_inicio time,
+    hora_fin time,
+    dia date
 );
 
 CREATE TABLE IF NOT EXISTS Empleado (
@@ -57,10 +58,11 @@ CREATE TABLE IF NOT EXISTS Profesor_Curso(
 );
 
 CREATE TABLE IF NOT EXISTS Profesor_Curso_Franja(
-    
-    id_profesor_curso serial REFERENCES Profesor_Curso(id_profesor_curso),
-    id_franja serial REFERENCES Franja_Horaria(id_franja)
-    
+    id_profesor_curso serial,
+    id_franja serial,
+    PRIMARY KEY (id_profesor_curso, id_franja),
+    FOREIGN KEY (id_profesor_curso) REFERENCES Profesor_Curso(id_profesor_curso),
+    FOREIGN KEY (id_franja) REFERENCES Franja_Horaria(id_franja)
 );
 
 CREATE TABLE IF NOT EXISTS Alumno(
@@ -76,7 +78,8 @@ CREATE TABLE IF NOT EXISTS Alumno(
 CREATE TABLE IF NOT EXISTS Franja_Alumno(
     id_franja serial REFERENCES Franja_Horaria(id_franja),
     id_alumno serial REFERENCES Alumno(id_alumno),
-    asistencia boolean
+    asistencia boolean,
+    PRIMARY KEY (id_franja, id_alumno)
 );
 
 
@@ -94,21 +97,32 @@ CREATE TABLE IF NOT EXISTS Apoderado(
     id_apoderado serial PRIMARY KEY,
     nombre varchar(30),
     apellido varchar(30),
-    sexo varchar(30),
+    sexo varchar(1),
     id_comuna serial REFERENCES Comuna(id_comuna)
 );
 
 
 CREATE TABLE IF NOT EXISTS Alumno_Apoderado(
-    id_alumno serial REFERENCES Alumno(id_alumno),
-    id_apoderado serial REFERENCES Apoderado(id_apoderado),
-    es_padreBiologico boolean 
-    
+    id_alumno serial,
+    id_apoderado serial,
+    es_padreBiologico boolean,
+    PRIMARY KEY (id_alumno, id_apoderado),
+    FOREIGN KEY (id_alumno) REFERENCES Alumno(id_alumno),
+    FOREIGN KEY (id_apoderado) REFERENCES Apoderado(id_apoderado)
 );
 
 
 CREATE TABLE IF NOT EXISTS Empleado_Rol(
-    id_empleado serial REFERENCES Empleado(id_empleado),
-    id_rol serial REFERENCES Rol(id_rol)
+    id_empleado serial,
+    id_rol serial,
+    PRIMARY KEY (id_empleado, id_rol),
+    FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
+    FOREIGN KEY (id_rol) REFERENCES Rol(id_rol)
 );
 
+CREATE TABLE IF NOT EXISTS Empleado_Administrativo (
+    id_administrativo serial PRIMARY KEY,
+    nombre varchar(30),
+    apellido varchar(30),
+    id_empleado serial REFERENCES Empleado(id_empleado)
+);
