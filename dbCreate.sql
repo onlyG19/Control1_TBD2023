@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS Rol(
 CREATE TABLE IF NOT EXISTS Curso(
     id_curso serial PRIMARY KEY,
     nivel int,
-    letra char(1),
-    
+    letra char(1)
 );
 
 
@@ -31,6 +30,22 @@ CREATE TABLE IF NOT EXISTS Franja_Horaria(
     id_franja serial PRIMARY KEY,
     hora_inicio timestamptz,
     hora_fin timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS Empleado (
+    id_empleado serial PRIMARY KEY,
+    sueldo money,
+    id_comuna serial REFERENCES Comuna(id_comuna),
+    id_colegio serial REFERENCES Colegio(id_colegio)
+
+);
+
+-- Crear la tabla 'Profesor'
+CREATE TABLE IF NOT EXISTS Profesor (
+    id_profesor serial PRIMARY KEY,
+    nombre varchar(30),
+    apellido varchar(30),
+    id_empleado serial REFERENCES Empleado(id_empleado)
 );
 
 CREATE TABLE IF NOT EXISTS Profesor_Curso(
@@ -89,24 +104,6 @@ CREATE TABLE IF NOT EXISTS Alumno_Apoderado(
     id_apoderado serial REFERENCES Apoderado(id_apoderado),
     es_padreBiologico boolean 
     
-);
-
-
-
-CREATE TABLE IF NOT EXISTS Empleado (
-    id_empleado serial PRIMARY KEY,
-    sueldo money
-    id_comuna serial REFERENCES Comuna(id_comuna)
-    id_colegio serial REFERENCES Colegio(id_colegio)
-
-);
-
--- Crear la tabla 'Profesor'
-CREATE TABLE IF NOT EXISTS Profesor (
-    id_profesor serial PRIMARY KEY,
-    nombre varchar(30),
-    apellido varchar(30),
-    id_empleado serial REFERENCES Empleado(id_empleado)
 );
 
 
