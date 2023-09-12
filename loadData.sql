@@ -15,7 +15,7 @@ VALUES (1, 'Maipú'),
 
 INSERT INTO apoderado (id_apoderado, nombre, apellido, sexo, id_comuna)
 VALUES (1, 'Diane', 'Oxtarby', 'Female', 5),
-       (2, 'Hazlett', 'Arntzen', 'Male', 12),
+       (2, 'Hazlett', 'Arntzen', 'Male', 10),
        (3, 'Van', 'Ravenshear', 'Male', 6),
        (4, 'Matthus', 'Flye', 'Male', 9),
        (5, 'Honey', 'Dawidowitsch', 'Female', 4),
@@ -38,22 +38,6 @@ VALUES (1, 4, 'B'),
        (10, 4, 'F');
 
 INSERT INTO rol (id_rol, nombre_rol) VALUES (1, 'Profesor');
-INSERT INTO empleado_rol (id_empleado, id_rol)
-VALUES (1, 1),
-       (2, 1),
-       (3, 1),
-       (4, 1),
-       (5, 1),
-       (6, 1),
-       (7, 1),
-       (8, 1),
-       (9, 1),
-       (10, 1),
-       (11, 1),
-       (12, 1),
-       (13, 1),
-       (14, 1),
-       (15, 1);
 
 INSERT INTO franja_horaria (id_franja, hora_inicio, hora_fin)
 VALUES (1, '2023-09-12 08:00:00-03:00', '2023-09-12 09:00:00-03:00'),
@@ -88,6 +72,23 @@ VALUES (1, 550000, 1, 1),
        (13, 680000, 3, 3),
        (14, 750000, 4, 4),
        (15, 820000, 5, 5);
+	   
+INSERT INTO empleado_rol (id_empleado, id_rol)
+VALUES (1, 1),
+       (2, 1),
+       (3, 1),
+       (4, 1),
+       (5, 1),
+       (6, 1),
+       (7, 1),
+       (8, 1),
+       (9, 1),
+       (10, 1),
+       (11, 1),
+       (12, 1),
+       (13, 1),
+       (14, 1),
+       (15, 1);
 
 INSERT INTO alumno (id_alumno, nombre, apellido, id_colegio, id_comuna)
 VALUES (1, 'Mateo', 'Muñoz', 1, 7),
