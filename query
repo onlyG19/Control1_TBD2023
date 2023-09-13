@@ -60,3 +60,96 @@ GROUP BY C.id_curso
 ORDER BY count(C.id_curso) ASC
 LIMIT 1
 
+--Pregunta 5
+-- identificar al alumno que no ha faltado nunca por curso
+SELECT A.nombre, A.apellido, SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) AS asistencia_a
+FROM alumno A
+INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
+GROUP BY A.id_alumno
+HAVING SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) = 0
+ORDER BY A.apellido, A.nombre
+--LIMIT 1 para obtener solo un alumno
+
+--Pregunta 6
+-- profesor con más horas de clases y mostrar su sueldo
+SELECT P.nombre, P.apellido, P.id_profesor,ROUND(
+    SUM(
+        (
+            EXTRACT(HOUR FROM FH.hora_fin) * 3600 +
+            EXTRACT(MINUTE FROM FH.hora_fin) * 60 -
+            EXTRACT(HOUR FROM FH.hora_inicio) * 3600 +
+            EXTRACT(MINUTE FROM FH.hora_inicio) * 60
+        ) / 3600
+    )::numeric, 2
+) as horas_clases, E.sueldo
+FROM profesor P
+INNER JOIN empleado E ON E.id_empleado = P.id_empleado
+INNER JOIN profesor_curso PC ON PC.id_profesor = P.id_profesor
+INNER JOIN profesor_curso_franja PCF ON PCF.id_profesor_curso = PC.id_profesor_curso
+INNER JOIN franja_horaria FH ON FH.id_franja = PCF.id_franja
+GROUP BY P.id_profesor, E.sueldo
+ORDER BY E.sueldo DESC
+LIMIT 1
+
+
+--Pregunta 7
+--profesor con menos horas de clases y mostrar sus sueldo
+SELECT P.nombre, P.apellido, P.id_profesor,ROUND(
+    SUM(
+        (
+            EXTRACT(HOUR FROM FH.hora_fin) * 3600 +
+            EXTRACT(MINUTE FROM FH.hora_fin) * 60 -
+            EXTRACT(HOUR FROM FH.hora_inicio) * 3600 +
+            EXTRACT(MINUTE FROM FH.hora_inicio) * 60
+        ) / 3600
+    )::numeric, 2
+) as horas_clases, E.sueldo
+FROM profesor P
+INNER JOIN empleado E ON E.id_empleado = P.id_empleado
+INNER JOIN profesor_curso PC ON PC.id_profesor = P.id_profesor
+INNER JOIN profesor_curso_franja PCF ON PCF.id_profesor_curso = PC.id_profesor_curso
+INNER JOIN franja_horaria FH ON FH.id_franja = PCF.id_franja
+GROUP BY P.id_profesor, E.sueldo
+ORDER BY E.sueldo ASC
+LIMIT 1
+
+
+--Pregunta 8
+-- listado alumnos por curso donde el apoderado no es su padre o madre(al menos uno de los apoderados no es su padre o madre)
+SELECT C.nivel, C.letra, A.nombre, A.apellido, AA.es_padreBiologico
+FROM Alumno A
+INNER JOIN curso_alumno CA ON CA.id_alumno = A.id_alumno
+INNER JOIN curso C ON C.id_curso = CA.id_curso
+INNER JOIN alumno_apoderado AA ON AA.id_alumno = A.id_alumno
+GROUP BY C.id_curso, A.id_alumno, AA.es_padreBiologico
+HAVING AA.es_padreBiologico = false
+
+
+--Pregunta 9
+--colegio con mayor promedio de asistencia el año 2019, identificando la comuna
+SELECT COL.nombre, C.nombre, COL.id_colegio, ROUND(AVG(CASE WHEN asistencia = true THEN 1 ELSE 0 END), 2) as promedio_asistencia
+FROM colegio COL
+INNER JOIN comuna C ON C.id_comuna = COL.id_comuna
+INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
+INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
+INNER JOIN franja_horaria FH ON FH.id_franja = FA.id_franja
+WHERE EXTRACT(YEAR FROM FH.dia) = 2023 -- 2019
+GROUP BY COL.id_colegio, C.id_comuna
+ORDER BY promedio_asistencia DESC
+LIMIT 1
+
+
+--Pregunta 10
+--lista colegios con mayor número de alumnos por año
+SELECT COL.nombre, COUNT(A.id_alumno) as numero_alumnos
+FROM colegio COL
+INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
+INNER JOIN curso_alumno CA ON CA.id_alumno = A.id_alumno
+WHERE CA.anio = 2023 -- 2019
+GROUP BY COL.id_colegio
+ORDER BY numero_alumnos DESC
+
+
+
+
+

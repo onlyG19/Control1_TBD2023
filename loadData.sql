@@ -121,17 +121,17 @@ VALUES (1, 'Joe', 'Doe', 1),
 (9, 'Aarón', 'Masa', 9),
 (10, 'Juana', 'Lambert', 10);
 
-INSERT INTO curso_alumno (id_alumno, id_curso, semestre)
-VALUES (1, 1, 'primer'),
-       (2, 2, 'primer'),
-       (3, 3, 'primer'),
-       (4, 4, 'primer'),
-       (5, 5, 'primer'),
-       (6, 6, 'primer'),
-       (7, 7, 'primer'),
-       (8, 8, 'primer'),
-       (9, 9, 'primer'),
-       (10, 10, 'primer');
+INSERT INTO curso_alumno (id_alumno, id_curso, anio)
+VALUES (1, 1, '2023'),
+       (2, 2, '2023'),
+       (3, 3, '2023'),
+       (4, 4, '2023'),
+       (5, 5, '2023'),
+       (6, 6, '2023'),
+       (7, 7, '2023'),
+       (8, 8, '2023'),
+       (9, 9, '2023'),
+       (10, 10, '2023');
 
 INSERT INTO alumno_apoderado (id_alumno, id_apoderado, es_padreBiologico)
 VALUES (1, 9, false),

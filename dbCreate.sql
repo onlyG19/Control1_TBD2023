@@ -87,8 +87,7 @@ CREATE TABLE IF NOT EXISTS Franja_Alumno(
 CREATE TABLE IF NOT EXISTS Curso_Alumno(
     id_alumno serial REFERENCES Alumno(id_alumno),
     id_curso serial REFERENCES Curso(id_curso),
-    semestre varchar(30)
-    
+    anio int
 );
 
 
