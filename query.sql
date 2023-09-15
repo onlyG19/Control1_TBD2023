@@ -167,6 +167,7 @@ INNER JOIN curso C ON C.id_curso = CA.id_curso
 INNER JOIN alumno_apoderado AA ON AA.id_alumno = A.id_alumno
 GROUP BY C.id_curso, A.id_alumno, AA.es_padreBiologico
 HAVING AA.es_padreBiologico = false
+ORDER BY c.nivel, c.letra
 
 
 --Pregunta 9
