@@ -1,5 +1,6 @@
 -- Pregunta 1
--- lista de profesores con su sueldo he indicado si son o no profesores jefe y alumnos de su jefatura, si corresponde
+-- lista de profesores con su sueldo he indicado si son o no profesores jefe y 
+-- alumnos de su jefatura, si corresponde
 SELECT
     P.nombre,
     P.apellido,
@@ -11,14 +12,14 @@ SELECT
         ELSE
             ARRAY['No aplica']::varchar[]
     END AS Alumnos_Jefatura
-FROM Profesor P
-INNER JOIN Empleado E ON P.id_empleado = E.id_empleado
-LEFT JOIN Profesor_Curso PC ON P.id_profesor = PC.id_profesor
-LEFT JOIN Curso C ON PC.id_curso = C.id_curso
-LEFT JOIN Curso_Alumno CA ON C.id_curso = CA.id_curso
-LEFT JOIN Alumno A ON CA.id_alumno = A.id_alumno
-GROUP BY P.id_profesor, E.sueldo, PC.profesor_jefe
-ORDER BY PC.profesor_jefe DESC;
+	FROM Profesor P
+	INNER JOIN Empleado E ON P.id_empleado = E.id_empleado
+	LEFT JOIN Profesor_Curso PC ON P.id_profesor = PC.id_profesor
+	LEFT JOIN Curso C ON PC.id_curso = C.id_curso
+	LEFT JOIN Curso_Alumno CA ON C.id_curso = CA.id_curso
+	LEFT JOIN Alumno A ON CA.id_alumno = A.id_alumno
+	GROUP BY P.id_profesor, E.sueldo, PC.profesor_jefe
+	ORDER BY PC.profesor_jefe DESC;
 
 -- Pregunta 2 
 -- lista de alumnos con más inasistencias por mes por curso el 2019
