@@ -32,6 +32,32 @@ WHERE EXTRACT(YEAR FROM FH.dia) = 2023 -- Deberia ser 2019
 GROUP BY EXTRACT(YEAR FROM FH.dia),EXTRACT(MONTH FROM FH.dia), A.id_alumno
 ORDER BY EXTRACT(MONTH FROM FH.dia), SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) DESC
 
+-- FIX FIX FIX FIX FIX 
+-- Pregunta 2 FIX   Basicamente este codigo lista los alumnos con mas Inasistencias Por Mes y Por cada curso.  OJO que la consulta es para el año 2019. no 2023
+WITH InasistenciasPorMesCurso AS (
+    SELECT
+        EXTRACT(YEAR FROM FH.dia) AS Anio,
+        EXTRACT(MONTH FROM FH.dia) AS Mes,
+        C.nivel,
+        C.letra,
+        A.id_alumno,
+        A.nombre,
+        A.apellido,
+        SUM(CASE WHEN FA.asistencia = false THEN 1 ELSE 0 END) AS inasistencias,
+        ROW_NUMBER() OVER (PARTITION BY EXTRACT(YEAR FROM FH.dia), EXTRACT(MONTH FROM FH.dia), C.nivel, C.letra ORDER BY SUM(CASE WHEN FA.asistencia = false THEN 1 ELSE 0 END) DESC) AS rn
+    FROM alumno A 
+    INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
+    INNER JOIN franja_horaria FH ON FH.id_franja = FA.id_franja
+    INNER JOIN curso_alumno CA ON A.id_alumno = CA.id_alumno
+    INNER JOIN curso C ON CA.id_curso = C.id_curso
+    WHERE EXTRACT(YEAR FROM FH.dia) = 2023  -- La consulta requiere el año 2023
+    GROUP BY EXTRACT(YEAR FROM FH.dia), EXTRACT(MONTH FROM FH.dia), C.nivel, C.letra, A.id_alumno, A.nombre, A.apellido
+)
+SELECT Anio, Mes, nivel, letra, id_alumno, nombre, apellido, inasistencias
+FROM InasistenciasPorMesCurso
+WHERE rn <= 5
+ORDER BY Anio, Mes, nivel, letra, inasistencias DESC;
+
 
 --Pregunta 3 
 -- lista de empleados identificando su rol, sueldo y comuna de residencia, debe esta ordenada por comuna y sueldo
@@ -70,6 +96,23 @@ GROUP BY A.id_alumno
 HAVING SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) = 0
 ORDER BY A.apellido, A.nombre
 --LIMIT 1 para obtener solo un alumno
+
+-- FIX FIX FIX FIX FIX 
+-- Pregunta 5 FIX , se modifica la logica con la que obtiene a los alumnos que no han faltado nunca por curso. Además se muestra el curso al que corresponde dicho alumno
+SELECT
+    A.nombre,
+    A.apellido,
+    C.nivel,
+    C.letra
+FROM alumno A
+INNER JOIN curso_alumno CA ON A.id_alumno = CA.id_alumno
+INNER JOIN curso C ON CA.id_curso = C.id_curso
+WHERE A.id_alumno NOT IN (
+    SELECT FA.id_alumno
+    FROM franja_alumno FA
+    WHERE asistencia = false
+)
+ORDER BY A.apellido, A.nombre;
 
 --Pregunta 6
 -- profesor con más horas de clases y mostrar su sueldo
