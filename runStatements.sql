@@ -9,7 +9,7 @@ SELECT
     PC.profesor_jefe,
     CASE
         WHEN PC.profesor_jefe = true THEN
-            ARRAY_AGG(A.nombre || ' ' || A.apellido ORDER BY A.nombre, A.apellido) 
+            ARRAY_AGG(A.nombre || ' ' || A.apellido ORDER BY A.nombre, A.apellido)
         ELSE
             ARRAY['No aplica']::varchar[]
     END AS Alumnos_Jefatura
@@ -19,6 +19,7 @@ SELECT
 	LEFT JOIN Curso C ON PC.id_curso = C.id_curso
 	LEFT JOIN Curso_Alumno CA ON C.id_curso = CA.id_curso
 	LEFT JOIN Alumno A ON CA.id_alumno = A.id_alumno
+    WHERE CA.anio = '2023'
 	GROUP BY P.id_profesor, E.sueldo, PC.profesor_jefe
 	ORDER BY PC.profesor_jefe DESC;
 
@@ -160,7 +161,7 @@ ORDER BY c.nivel, c.letra;
 
 --Pregunta 9
 --colegio con mayor promedio de asistencia el año 2019, identificando la comuna
-SELECT COL.nombre, C.nombre, COL.id_colegio, ROUND(AVG(CASE WHEN asistencia = true THEN 1 ELSE 0 END), 2) as promedio_asistencia
+SELECT COL.nombre AS colegio, C.nombre AS comuna, COL.id_colegio, ROUND(AVG(CASE WHEN asistencia = true THEN 1 ELSE 0 END), 2) as promedio_asistencia
 FROM colegio COL
 INNER JOIN comuna C ON C.id_comuna = COL.id_comuna
 INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
@@ -174,7 +175,7 @@ LIMIT 1;
 
 --Pregunta 10
 --lista colegios con mayor número de alumnos por año
-SELECT COL.nombre, COUNT(A.id_alumno) as alumnos, CA.anio as año
+SELECT COL.nombre AS colegio, COUNT(A.id_alumno) as alumnos, CA.anio as año
 FROM colegio COL
 INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
 INNER JOIN curso_alumno CA ON CA.id_alumno = A.id_alumno
