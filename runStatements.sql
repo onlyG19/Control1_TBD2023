@@ -34,7 +34,7 @@ WITH InasistenciasPorMesCurso AS (
         A.id_alumno,
         A.nombre,
         A.apellido,
-        SUM(CASE WHEN FA.asistencia = false THEN 1 ELSE 0 END) AS inasistencias
+        SUM(CASE WHEN FA.asistencia = false THEN 1 ELSE 0 END) AS asistencias
     FROM alumno A 
     INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
     INNER JOIN franja_horaria FH ON FH.id_franja = FA.id_franja
@@ -43,15 +43,15 @@ WITH InasistenciasPorMesCurso AS (
     WHERE EXTRACT(YEAR FROM FH.dia) = 2019
     GROUP BY EXTRACT(YEAR FROM FH.dia), EXTRACT(MONTH FROM FH.dia), C.nivel, C.letra, A.id_alumno, A.nombre, A.apellido
 )
-SELECT Anio as año, Mes, nivel, letra, id_alumno, nombre, apellido, inasistencias
+SELECT Anio as año, Mes, nivel, letra, id_alumno, nombre, apellido, asistencias
 FROM InasistenciasPorMesCurso
-WHERE (Anio, nivel, letra, inasistencias) IN (
-    SELECT Anio, nivel, letra, MAX(inasistencias)
+WHERE (Anio, nivel, letra, asistencias) IN (
+    SELECT Anio, nivel, letra, MAX(asistencias)
     FROM InasistenciasPorMesCurso
-    WHERE inasistencias >= 0
+    WHERE asistencias >= 0
     GROUP BY Anio, nivel, letra
 )
-ORDER BY Anio, Mes, nivel, letra, inasistencias DESC;
+ORDER BY Anio, Mes, nivel, letra, asistencias DESC;
 
 -- Pregunta 3 
 -- lista de empleados identificando su rol, sueldo y comuna de residencia, debe esta ordenada por comuna y sueldo
