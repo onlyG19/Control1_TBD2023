@@ -174,9 +174,25 @@ LIMIT 1;
 
 --Pregunta 10
 --lista colegios con mayor número de alumnos por año
-SELECT COL.nombre, COUNT(A.id_alumno) as alumnos, CA.anio as año
-FROM colegio COL
-INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
-INNER JOIN curso_alumno CA ON CA.id_alumno = A.id_alumno
-GROUP BY CA.anio, COL.nombre
-ORDER BY año ASC;
+WITH EstudiantesPorColegio AS (
+  SELECT
+    CA.anio AS año,
+    COL.nombre AS nombre_colegio,
+    COUNT(*) AS estudiantes
+  FROM colegio COL
+  INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
+  INNER JOIN curso_alumno CA ON A.id_alumno = CA.id_alumno
+  GROUP BY CA.anio, COL.nombre
+)
+
+SELECT año, nombre_colegio, estudiantes
+FROM (
+  SELECT
+    año,
+    nombre_colegio,
+    estudiantes,
+    ROW_NUMBER() OVER(PARTITION BY año ORDER BY estudiantes DESC) AS rango
+  FROM EstudiantesPorColegio
+) AS ColegiosConRango
+WHERE rango = 1
+ORDER BY año;
