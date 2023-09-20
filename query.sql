@@ -8,7 +8,7 @@ SELECT
     PC.profesor_jefe,
     CASE
         WHEN PC.profesor_jefe = true THEN
-            ARRAY_AGG(A.nombre || ' ' || A.apellido) 
+            ARRAY_AGG(A.nombre || ' ' || A.apellido ORDER BY A.nombre, A.apellido) 
         ELSE
             ARRAY['No aplica']::varchar[]
     END AS Alumnos_Jefatura
@@ -24,17 +24,9 @@ SELECT
 
 -- Pregunta 2 
 -- lista de alumnos con más inasistencias por mes por curso el 2019
-SELECT EXTRACT(YEAR FROM FH.dia), EXTRACT(MONTH FROM FH.dia) as Mes, 
- A.nombre, A.apellido, SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) AS asistencia_a
-FROM alumno A 
-INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
-INNER JOIN franja_horaria FH ON FH.id_franja = FA.id_franja
-WHERE EXTRACT(YEAR FROM FH.dia) = 2023 -- Deberia ser 2019
-GROUP BY EXTRACT(YEAR FROM FH.dia),EXTRACT(MONTH FROM FH.dia), A.id_alumno
-ORDER BY EXTRACT(MONTH FROM FH.dia), SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) DESC;
-
--- FIX FIX FIX FIX FIX 
--- Pregunta 2 FIX   Basicamente este codigo lista los alumnos con mas Inasistencias Por Mes y Por cada curso.  OJO que la consulta es para el año 2019. no 2023
+-- Pregunta 2 FIX   Basicamente este codigo lista los alumnos con mas 
+-- Inasistencias Por Mes y Por cada curso.  
+-- OJO que la consulta es para el año 2019. no 2023
 WITH InasistenciasPorMesCurso AS (
     SELECT
         EXTRACT(YEAR FROM FH.dia) AS Anio,
@@ -91,21 +83,11 @@ LIMIT 1;
 
 -- Pregunta 5
 -- identificar al alumno que no ha faltado nunca por curso
-SELECT A.nombre, A.apellido, SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) AS asistencia_a
-FROM alumno A
-INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
-GROUP BY A.id_alumno
-HAVING SUM(CASE WHEN asistencia = true THEN 0 ELSE 1 END) = 0
-ORDER BY A.apellido, A.nombre;
---LIMIT 1 para obtener solo un alumno
-
--- FIX FIX FIX FIX FIX 
--- Pregunta 5 FIX , se modifica la logica con la que obtiene a los alumnos que no han faltado nunca por curso. Además se muestra el curso al que corresponde dicho alumno
 SELECT
+	C.nivel,
+    C.letra,
     A.nombre,
-    A.apellido,
-    C.nivel,
-    C.letra
+    A.apellido
 FROM alumno A
 INNER JOIN curso_alumno CA ON A.id_alumno = CA.id_alumno
 INNER JOIN curso C ON CA.id_curso = C.id_curso
@@ -114,7 +96,7 @@ WHERE A.id_alumno NOT IN (
     FROM franja_alumno FA
     WHERE asistencia = false
 )
-ORDER BY A.apellido, A.nombre;
+ORDER BY C.nivel, C.letra;
 
 
 -- Pregunta 6
@@ -157,7 +139,7 @@ INNER JOIN profesor_curso PC ON PC.id_profesor = P.id_profesor
 INNER JOIN profesor_curso_franja PCF ON PCF.id_profesor_curso = PC.id_profesor_curso
 INNER JOIN franja_horaria FH ON FH.id_franja = PCF.id_franja
 GROUP BY P.id_profesor, E.sueldo
-ORDER BY horas_clases ASC;
+ORDER BY horas_clases ASC
 LIMIT 1;
 
 
@@ -189,10 +171,10 @@ LIMIT 1;
 
 --Pregunta 10
 --lista colegios con mayor número de alumnos por año
-SELECT COL.nombre, COUNT(A.id_alumno) as numero_alumnos
+SELECT COL.nombre, COUNT(A.id_alumno), CA.anio as numero_alumnos
 FROM colegio COL
 INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
 INNER JOIN curso_alumno CA ON CA.id_alumno = A.id_alumno
 WHERE CA.anio = 2023 -- 2019
-GROUP BY COL.id_colegio
+GROUP BY CA.anio, COL.nombre
 ORDER BY numero_alumnos DESC;
