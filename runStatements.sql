@@ -1,6 +1,7 @@
 -- Pregunta 1
 -- lista de profesores con su sueldo he indicado si son o no profesores jefe y 
 -- alumnos de su jefatura, si corresponde
+-- FALTA CORREGIR EL PROBLEMA DE LOS APELLIDOS
 SELECT
     P.nombre,
     P.apellido,
@@ -24,9 +25,6 @@ SELECT
 
 -- Pregunta 2 
 -- lista de alumnos con más inasistencias por mes por curso el 2019
--- Pregunta 2 FIX   Basicamente este codigo lista los alumnos con mas 
--- Inasistencias Por Mes y Por cada curso.  
--- OJO que la consulta es para el año 2019. no 2023
 WITH InasistenciasPorMesCurso AS (
     SELECT
         EXTRACT(YEAR FROM FH.dia) AS Anio,
@@ -36,21 +34,24 @@ WITH InasistenciasPorMesCurso AS (
         A.id_alumno,
         A.nombre,
         A.apellido,
-        SUM(CASE WHEN FA.asistencia = false THEN 1 ELSE 0 END) AS inasistencias,
-        ROW_NUMBER() OVER (PARTITION BY EXTRACT(YEAR FROM FH.dia), EXTRACT(MONTH FROM FH.dia), C.nivel, C.letra ORDER BY SUM(CASE WHEN FA.asistencia = false THEN 1 ELSE 0 END) DESC) AS rn
+        SUM(CASE WHEN FA.asistencia = false THEN 1 ELSE 0 END) AS inasistencias
     FROM alumno A 
     INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
     INNER JOIN franja_horaria FH ON FH.id_franja = FA.id_franja
     INNER JOIN curso_alumno CA ON A.id_alumno = CA.id_alumno
     INNER JOIN curso C ON CA.id_curso = C.id_curso
-    WHERE EXTRACT(YEAR FROM FH.dia) = 2023  -- La consulta requiere el año 2023
+    WHERE EXTRACT(YEAR FROM FH.dia) = 2019
     GROUP BY EXTRACT(YEAR FROM FH.dia), EXTRACT(MONTH FROM FH.dia), C.nivel, C.letra, A.id_alumno, A.nombre, A.apellido
 )
-SELECT Anio, Mes, nivel, letra, id_alumno, nombre, apellido, inasistencias
+SELECT Anio as año, Mes, nivel, letra, id_alumno, nombre, apellido, inasistencias
 FROM InasistenciasPorMesCurso
-WHERE rn <= 5
+WHERE (Anio, nivel, letra, inasistencias) IN (
+    SELECT Anio, nivel, letra, MAX(inasistencias)
+    FROM InasistenciasPorMesCurso
+    WHERE inasistencias >= 0
+    GROUP BY Anio, nivel, letra
+)
 ORDER BY Anio, Mes, nivel, letra, inasistencias DESC;
-
 
 -- Pregunta 3 
 -- lista de empleados identificando su rol, sueldo y comuna de residencia, debe esta ordenada por comuna y sueldo
@@ -72,13 +73,15 @@ ORDER BY comuna, sueldo DESC;
 
 -- Pregunta 4
 -- curso con menos alumnos por año
-SELECT C.nivel, C.letra, count(C.id_curso) as numero_alumos
-FROM curso C
-INNER JOIN curso_alumno CA ON CA.id_curso = C.id_curso
-INNER JOIN alumno A ON A.id_alumno = CA.id_alumno
-GROUP BY C.id_curso
-ORDER BY count(C.id_curso) ASC
-LIMIT 1;
+SELECT DISTINCT ON (CA.anio)
+    CA.anio AS año,
+    C.nivel,
+    C.letra,
+    COUNT(*) AS estudiantes
+FROM curso_alumno CA
+JOIN curso C ON CA.id_curso = C.id_curso
+GROUP BY CA.anio, C.nivel, C.letra
+ORDER BY año, estudiantes;
 
 
 -- Pregunta 5
@@ -163,7 +166,7 @@ INNER JOIN comuna C ON C.id_comuna = COL.id_comuna
 INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
 INNER JOIN franja_alumno FA ON FA.id_alumno = A.id_alumno
 INNER JOIN franja_horaria FH ON FH.id_franja = FA.id_franja
-WHERE EXTRACT(YEAR FROM FH.dia) = 2023 -- 2019
+WHERE EXTRACT(YEAR FROM FH.dia) = 2019
 GROUP BY COL.id_colegio, C.id_comuna
 ORDER BY promedio_asistencia DESC
 LIMIT 1;
@@ -171,10 +174,9 @@ LIMIT 1;
 
 --Pregunta 10
 --lista colegios con mayor número de alumnos por año
-SELECT COL.nombre, COUNT(A.id_alumno), CA.anio as numero_alumnos
+SELECT COL.nombre, COUNT(A.id_alumno) as alumnos, CA.anio as año
 FROM colegio COL
 INNER JOIN alumno A ON A.id_colegio = COL.id_colegio
 INNER JOIN curso_alumno CA ON CA.id_alumno = A.id_alumno
-WHERE CA.anio = 2023 -- 2019
 GROUP BY CA.anio, COL.nombre
-ORDER BY numero_alumnos DESC;
+ORDER BY año ASC;
