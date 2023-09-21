@@ -1,7 +1,6 @@
 -- Pregunta 1
 -- lista de profesores con su sueldo he indicado si son o no profesores jefe y 
 -- alumnos de su jefatura, si corresponde
--- FALTA CORREGIR EL PROBLEMA DE LOS APELLIDOS
 SELECT
     P.nombre,
     P.apellido,
